@@ -1,0 +1,25 @@
+int LED = 11;
+int button = 2;
+int val = LOW;
+
+void setup()
+{
+  pinMode(LED, OUTPUT);
+  pinMode(button, INPUT);
+  Serial.begin(9600);
+  attachInterrupt(digitalPinToInterrupt(button), Interrupt, FALLING);
+}
+
+void loop()
+{
+  // Code here
+  Serial.println("In Loop");
+  delay(10000); // Wait for 10 seconds
+}
+
+void Interrupt()
+{
+  val = !val;
+  digitalWrite(LED, val);
+  Serial.println("Interrupt and switch on/off the LED");
+}
