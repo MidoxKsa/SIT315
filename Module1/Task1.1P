@@ -1,0 +1,32 @@
+int led = 8;
+int sensor = 3;
+int state = LOW;
+int motion = 0;
+
+void setup() {
+  pinMode(led, OUTPUT);
+  pinMode(sensor, INPUT);
+  Serial.begin(9600);
+}
+
+void loop(){
+  motion = digitalRead(sensor);
+  if (motion == HIGH) {
+    digitalWrite(led, HIGH);
+    delay(100);
+    
+    if (state == LOW) {
+      Serial.println("Motion Started"); 
+      state = HIGH;
+    }
+  }
+  else {
+      digitalWrite(led, LOW);
+      delay(200);
+      
+      if (state == HIGH){
+        Serial.println("Motion Stopped");
+        state = LOW;
+    }
+  }
+}
