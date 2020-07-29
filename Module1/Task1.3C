@@ -1,0 +1,35 @@
+volatile byte RLED = LOW;
+volatile byte GLED = LOW;
+volatile byte OLED = LOW;
+
+void setup()
+{
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+  
+  
+  PCICR |= 0b00000111;
+  PCMSK2 |= 0b10011100;
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  Serial.println("Inside the superloop");
+  digitalWrite(11,RLED);
+  digitalWrite(10,GLED);
+  digitalWrite(12,OLED);
+  delay(2000);
+}
+
+
+ISR(PCINT2_vect){
+  RLED = PIND & B00001000;
+  GLED = PIND & B00000100;
+  OLED = PIND & B00010000;
+  Serial.println("Superloop interrupted");
+}
