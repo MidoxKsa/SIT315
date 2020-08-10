@@ -1,0 +1,68 @@
+
+int ledPin = 13;
+volatile byte GLED = 0;
+volatile byte RLED = 0;
+volatile byte BLED = 0;
+
+
+void setup()
+{
+  noInterrupts();
+  Serial.begin(9600);
+  
+  //Clear registers
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1 = 0;
+  
+  //Set Timer for 2 seconds
+  OCR1A = 31249.5;
+  
+  TCCR1B |= (1 << CS12) | (1 << CS10);
+  TIMSK1 |= (1 << OCIE1A);
+  TCCR1B |= (1 << WGM12);
+  
+  interrupts();
+  
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+  
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+  
+  PCICR |= 0b00000111;
+  PCMSK2 |= 0b00011100;
+}
+
+  void loop()
+  {
+    Serial.println("Inside the main loop");
+    
+    digitalWrite(10, GLED);
+    digitalWrite(11, RLED);
+    digitalWrite(12, BLED);
+    
+    delay(1000);
+  }
+  
+  ISR(PCINT2_vect)
+  {
+    
+    GLED = PIND & B00000100;
+    RLED = PIND & B00001000;
+    BLED = PIND & B00010000;
+    
+    Serial.println("Loop interrupted by Sensor");
+  }
+  
+  
+  ISR(TIMER1_COMPA_vect)
+  {
+    digitalWrite(ledPin, digitalRead(ledPin) ^ 1);
+    
+    Serial.println("Loop interrupted Timer Interrupt");
+  }
+  
